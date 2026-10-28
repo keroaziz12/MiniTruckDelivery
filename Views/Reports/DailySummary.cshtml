@@ -1,0 +1,30 @@
+@model MiniTruckDelivery.Models.ReportViewModel
+@{
+    ViewData["Title"] = "Daily Summary";
+}
+<div class="report-page">
+    <div class="page-heading"><div><span class="eyebrow">DRIVER REPORT</span><h1>Daily Summary</h1><p>Review your revenue and expenses for one day.</p></div></div>
+    <form asp-action="DailySummary" method="get" class="surface-card report-filter">
+        <label for="date" class="form-label">Select date</label>
+        <div class="d-flex gap-2"><input id="date" name="date" type="date" value="@Model.Date.ToString("yyyy-MM-dd")" class="form-control" /><button type="submit" class="btn btn-primary">View</button></div>
+    </form>
+    <section class="report-stats">
+        <article class="report-stat"><span>Total revenue</span><strong>@Model.TotalRevenue.ToString("N2")</strong></article>
+        <article class="report-stat"><span>Total expenses</span><strong>@Model.TotalExpenses.ToString("N2")</strong></article>
+        <article class="report-stat"><span>Net income</span><strong>@Model.NetIncome.ToString("N2")</strong></article>
+    </section>
+    @if (!Model.Trips.Any())
+    {
+        <div class="surface-card empty-state">No trips found for this date.</div>
+    }
+    else
+    {
+        <div class="table-responsive surface-card table-card"><table class="table app-table"><thead><tr><th>Customer</th><th>Driver</th><th>Agreed amount</th><th>Expenses</th><th>Net income</th></tr></thead><tbody>
+        @foreach (var trip in Model.Trips)
+        {
+            var tripExpenses = trip.Expenses.Sum(expense => expense.Amount);
+            <tr><td>@trip.CustomerName</td><td>@trip.Driver.FullName</td><td>@trip.AgreedAmount.ToString("N2")</td><td>@tripExpenses.ToString("N2")</td><td>@((trip.AgreedAmount - tripExpenses).ToString("N2"))</td></tr>
+        }
+        </tbody></table></div>
+    }
+</div>

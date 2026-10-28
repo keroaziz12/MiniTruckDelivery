@@ -1,0 +1,23 @@
+@model IReadOnlyList<MiniTruckDelivery.Models.Trip>
+<details class="notification-menu" id="tripNotifications" data-reminder-count="@Model.Count">
+    <summary class="notification-toggle" aria-label="Upcoming trip reminders" title="Upcoming trip reminders">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" /></svg>
+        @if (Model.Count > 0) { <span class="notification-count">@Model.Count</span> }
+    </summary>
+    <div class="notification-panel">
+        <div class="notification-panel-title"><strong>Trip reminders</strong><span>Sound reminder: 1 day before at 8:00 AM</span></div>
+        @if (Model.Count == 0)
+        {
+            <p class="notification-empty">No trips coming up in the next 7 days.</p>
+        }
+        else
+        {
+            @foreach (var trip in Model)
+            {
+                <a class="notification-item" data-trip-id="@trip.Id" data-trip-date="@trip.TripDate.ToString("yyyy-MM-dd")" data-reminder-date="@trip.TripDate.Date.AddDays(-1).ToString("yyyy-MM-dd")" asp-controller="Trips" asp-action="Details" asp-route-id="@trip.Id">
+                    <span class="notification-dot"></span><span><strong>@trip.CustomerName</strong><small>@trip.StartLocation → @trip.EndLocation</small></span><time>@trip.TripDate.ToString("MMM dd")</time>
+                </a>
+            }
+        }
+    </div>
+</details>

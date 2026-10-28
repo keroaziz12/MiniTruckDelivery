@@ -1,0 +1,20 @@
+@model IEnumerable<MiniTruckDelivery.Models.Trip>
+@{ ViewData["Title"] = "My Trips"; }
+<div class="page-heading"><div><span class="eyebrow">DRIVER SPACE</span><h1>My Trips</h1><p>Manage your deliveries and keep an eye on upcoming dates.</p></div><a asp-action="Create" class="btn btn-primary">Add Trip</a></div>
+@if (!Model.Any()) { <div class="surface-card empty-state">No trips have been registered yet. Add your first trip to get started.</div> }
+else
+{
+<div class="table-responsive surface-card table-card"><table class="table app-table"><thead><tr><th>Customer</th><th>From</th><th>To</th><th>Agreed Amount</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead><tbody>
+@foreach (var trip in Model)
+{
+<tr><td>@trip.CustomerName</td><td>@trip.StartLocation</td><td>@trip.EndLocation</td><td>@trip.AgreedAmount.ToString("N2")</td><td>@trip.TripDate.ToString("yyyy-MM-dd")</td><td><span class="status-pill @(trip.IsCancelled ? "status-muted" : "status-ok")">@(trip.IsCancelled ? "Cancelled by admin" : "Active")</span></td><td>
+<a asp-action="Details" asp-route-id="@trip.Id" class="btn btn-sm btn-outline-primary">Details</a>
+@if (!trip.IsCancelled)
+{
+<a asp-action="Edit" asp-route-id="@trip.Id" class="btn btn-sm btn-outline-secondary">Edit</a>
+<form asp-action="Delete" asp-route-id="@trip.Id" method="post" class="d-inline" onsubmit="return confirm('Delete this trip and its expenses?');"><button type="submit" class="btn btn-sm btn-danger">Delete</button></form>
+}
+</td></tr>
+}
+</tbody></table></div>
+}

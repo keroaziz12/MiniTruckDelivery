@@ -1,0 +1,17 @@
+@model IEnumerable<MiniTruckDelivery.Models.AdminDriverRowViewModel>
+@{ ViewData["Title"] = "Registered accounts"; }
+<div class="page-heading"><div><span class="eyebrow">ADMIN · ACCOUNT ACCESS</span><h1>Registered accounts</h1><p>All registered accounts except administrators, including accounts with no trips or driver profile.</p></div><a asp-action="Index" class="btn btn-outline-primary">Back to dashboard</a></div>
+@if (TempData["AdminMessage"] is string message) { <div class="alert alert-info">@message</div> }
+<section class="surface-card table-card"><div class="table-responsive"><table class="table align-middle app-table mb-0">
+<thead><tr><th>Name</th><th>Username</th><th>Email</th><th>Phone</th><th>Vehicle</th><th>Trips</th><th>Expenses</th><th>Access</th><th>Actions</th></tr></thead><tbody>
+@foreach (var account in Model)
+{
+<tr><td class="fw-semibold">@account.FullName</td><td>@account.UserName</td><td>@account.Email</td><td>@account.PhoneNumber</td><td>@account.VehicleType</td><td>@account.TripsCount</td><td>@account.TotalExpenses.ToString("N2")</td><td><span class="status-pill @(account.HasAccess ? "status-ok" : "status-muted")">@(account.HasAccess ? "Enabled" : "Disabled")</span></td><td class="text-nowrap">
+@if (account.DriverId.HasValue) { <a asp-action="DriverDetails" asp-route-id="@account.DriverId" class="btn btn-sm btn-outline-primary">Trips & expenses</a> }
+<form asp-action="SetUserAccess" method="post" class="d-inline"><input type="hidden" name="userId" value="@account.UserId" /><input type="hidden" name="allowAccess" value="@(!account.HasAccess)" /><button class="btn btn-sm @(account.HasAccess ? "btn-outline-danger" : "btn-outline-success")" type="submit">@(account.HasAccess ? "Disable access" : "Enable access")</button></form>
+<form asp-action="DeleteUser" method="post" class="d-inline" onsubmit="return confirm('Permanently delete this account? Accounts with trip history cannot be deleted.');"><input type="hidden" name="userId" value="@account.UserId" /><button class="btn btn-sm btn-danger" type="submit">Delete account</button></form>
+</td></tr>
+}
+@if (!Model.Any()) { <tr><td colspan="9" class="empty-row">No non-admin accounts are registered yet.</td></tr> }
+</tbody></table></div></section>
+

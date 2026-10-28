@@ -1,0 +1,17 @@
+@model MiniTruckDelivery.Models.Trip
+@{ ViewData["Title"] = "Trip Details"; var totalExpenses = Model.Expenses.Sum(expense => expense.Amount); }
+<div class="details-page">
+<div class="page-heading"><div><span class="eyebrow">TRIP SUMMARY</span><h1>Trip Details</h1><p>Customer: @Model.CustomerName</p></div><a asp-action="Index" class="btn btn-outline-primary">Back to Trips</a></div>
+@if (Model.IsCancelled) { <div class="alert alert-warning">This trip was cancelled by the administrator. You can review its history, but cannot change it or add expenses.</div> }
+<dl class="row surface-card details-card mb-4">
+<dt class="col-sm-3">Driver</dt><dd class="col-sm-9">@Model.Driver.FullName</dd><dt class="col-sm-3">From</dt><dd class="col-sm-9">@Model.StartLocation</dd><dt class="col-sm-3">To</dt><dd class="col-sm-9">@Model.EndLocation</dd><dt class="col-sm-3">Agreed Amount</dt><dd class="col-sm-9">@Model.AgreedAmount.ToString("N2")</dd><dt class="col-sm-3">Trip Date</dt><dd class="col-sm-9">@Model.TripDate.ToString("yyyy-MM-dd")</dd><dt class="col-sm-3">Status</dt><dd class="col-sm-9">@(Model.IsCancelled ? "Cancelled by administrator" : "Active")</dd><dt class="col-sm-3">Total Expenses</dt><dd class="col-sm-9">@totalExpenses.ToString("N2")</dd><dt class="col-sm-3">Net Income</dt><dd class="col-sm-9">@((Model.AgreedAmount - totalExpenses).ToString("N2"))</dd>
+</dl>
+<div class="page-heading"><div><h2>Expenses</h2><p>Costs recorded for this trip.</p></div>@if (!Model.IsCancelled) { <a asp-controller="Expenses" asp-action="Add" asp-route-tripId="@Model.Id" class="btn btn-primary">Add Expense</a> }</div>
+@if (!Model.Expenses.Any()) { <div class="surface-card empty-state">No expenses have been added to this trip yet.</div> }
+else
+{
+<div class="table-responsive surface-card table-card"><table class="table app-table"><thead><tr><th>Type</th><th>Amount</th><th>Date</th><th>Description</th>@if (!Model.IsCancelled) { <th>Actions</th> }</tr></thead><tbody>
+@foreach (var expense in Model.Expenses) { <tr><td>@expense.ExpenseType</td><td>@expense.Amount.ToString("N2")</td><td>@expense.ExpenseDate.ToString("yyyy-MM-dd")</td><td>@expense.Description</td>@if (!Model.IsCancelled) { <td><form asp-controller="Expenses" asp-action="Delete" asp-route-id="@expense.Id" method="post" class="d-inline"><button type="submit" class="btn btn-sm btn-outline-danger">Delete</button></form></td> }</tr> }
+</tbody></table></div>
+}
+</div>

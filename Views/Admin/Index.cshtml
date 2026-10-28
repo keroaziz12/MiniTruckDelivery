@@ -1,0 +1,36 @@
+@model MiniTruckDelivery.Models.AdminDashboardViewModel
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin-dashboard.css" asp-append-version="true" />
+}
+<div class="admin-shell">
+    <div class="admin-heading">
+        <div><span class="eyebrow">MINITRUCK DELIVERY · ADMIN</span><h1>Dashboard</h1><p>Monitor users, drivers, and delivery activity.</p></div>
+        <div class="admin-date">@DateTime.Today.ToString("dddd, dd MMMM yyyy")</div>
+    </div>
+    <section class="welcome-card">
+        <div class="welcome-copy"><span class="welcome-tag">ADMIN OVERVIEW</span><h2>Good day, @User.Identity?.Name</h2><p>Review trips, driver expenses, and platform activity from one place.</p><a asp-action="Drivers" class="welcome-link">Browse accounts <span aria-hidden="true">→</span></a></div>
+        <img src="~/images/brand/dashboard-route.svg" alt="Mini truck following a delivery route" />
+    </section>
+    <section class="stats-grid" aria-label="User statistics">
+        <a asp-action="Drivers" class="stat-card stat-primary stat-link"><div class="stat-top"><span>Total users</span><span class="stat-icon">◎</span></div><div class="stat-value">@Model.TotalUsers</div><div class="stat-note">Registered accounts, excluding admins · view all →</div></a>
+        <a asp-action="Drivers" class="stat-card stat-link"><div class="stat-top"><span>Driver accounts</span><span class="stat-icon">↗</span></div><div class="stat-value">@Model.DriverAccounts</div><div class="stat-note">Drivers linked to an account</div></a>
+        <a asp-action="Drivers" class="stat-card stat-link"><div class="stat-top"><span>Driver profiles</span><span class="stat-icon">▤</span></div><div class="stat-value">@Model.DriverProfiles</div><div class="stat-note">Browse driver profiles →</div></a>
+        <a asp-action="Drivers" class="stat-card stat-link @(Model.UnlinkedDriverProfiles > 0 ? "stat-attention" : "")"><div class="stat-top"><span>Unlinked profiles</span><span class="stat-icon">!</span></div><div class="stat-value">@Model.UnlinkedDriverProfiles</div><div class="stat-note">Legacy profiles without a login</div></a>
+    </section>
+    <section class="admin-quick-grid">
+        <a asp-action="Trips" class="quick-card"><span class="quick-card-icon">↗</span><span><strong>Trips overview</strong><small>Browse all driver trips</small></span><span class="quick-arrow">→</span></a>
+        <a asp-action="Drivers" class="quick-card"><span class="quick-card-icon">♙</span><span><strong>Registered accounts</strong><small>Manage account access and review driver records</small></span><span class="quick-arrow">→</span></a>
+    </section>
+    <section class="dashboard-bottom">
+        <article class="panel complaints-panel"><div class="panel-title-row"><div><span class="eyebrow">SUPPORT</span><h2>Driver complaints</h2></div><span class="coming-soon">EMAIL</span></div><p>Drivers can send a private message to the support email. Messages are sent to the support inbox through EmailJS.</p><a class="support-email" href="mailto:kerilesaziz12@gmail.com">kerilesaziz12@gmail.com</a></article>
+        <aside class="panel admin-note"><span class="note-icon">✓</span><h2>Admin controls</h2><p>Manage driver access, inspect trip expenses, cancel trips, or remove records when appropriate.</p></aside>
+    </section>
+</div>
+
+
+
+
+

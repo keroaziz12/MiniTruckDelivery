@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f4f8fa" />
+    <title>@ViewData["Title"] - MiniTruckDelivery</title>
+    <link rel="icon" type="image/svg+xml" href="~/favicon.svg" asp-append-version="true" />
+    <script>
+        try { document.documentElement.dataset.theme = localStorage.getItem("mtd-theme") === "dark" ? "dark" : "light"; }
+        catch { document.documentElement.dataset.theme = "light"; }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <script type="importmap"></script>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <script src="https://cdn.jsdelivr.net/npm/@@emailjs/browser@4.4.1/dist/email.min.js"></script>
+    <script src="~/js/complaint-email.js" asp-append-version="true"></script>
+    <link rel="stylesheet" href="~/css/tailwind.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/MiniTruckDelivery.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site-overrides.css" asp-append-version="true" />
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+    <header class="site-header">
+        <nav class="navbar navbar-expand-lg app-navbar">
+            <div class="container-fluid app-nav-inner">
+                <a class="navbar-brand app-brand" asp-controller="Home" asp-action="Index">
+                    <img src="~/images/brand/minitruck-logo.svg" data-logo-light="/images/brand/minitruck-logo.svg" data-logo-dark="/images/brand/minitruck-logo-dark.svg" alt="MiniTruckDelivery" />
+                </a>
+                <button class="navbar-toggler app-nav-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavigation" aria-controls="mainNavigation" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="mainNavigation">
+                    <ul class="navbar-nav app-nav-links me-auto">
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item"><a class="nav-link" asp-controller="Admin" asp-action="Index">Dashboard</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-controller="Admin" asp-action="Drivers">Accounts</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-controller="Admin" asp-action="Trips">Trips</a></li>
+                        }
+                        else if (User.IsInRole("Driver"))
+                        {
+                            <li class="nav-item"><a class="nav-link" asp-controller="Trips" asp-action="Index">My Trips</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-controller="Reports" asp-action="DailySummary">Daily Report</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-controller="Reports" asp-action="WeeklySummary">Weekly Report</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-controller="Support" asp-action="Contact">Support</a></li>
+                        }
+                        else if (User.Identity?.IsAuthenticated != true)
+                        {
+                            <li class="nav-item"><a class="nav-link" asp-controller="Account" asp-action="Login">Login</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-controller="Account" asp-action="Register">Register as Driver</a></li>
+                        }
+                    </ul>
+                    <div class="app-nav-actions">
+                        @if (User.IsInRole("Driver"))
+                        {
+                            @await Component.InvokeAsync("UpcomingTrips")
+                        }
+                        <button type="button" id="themeToggle" class="theme-toggle" aria-label="Switch to dark mode" title="Switch theme">
+                            <span class="theme-icon" aria-hidden="true">☾</span><span class="theme-label">Dark mode</span>
+                        </button>
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <span class="user-chip">@User.Identity.Name</span>
+                            <form asp-controller="Account" asp-action="Logout" method="post" class="logout-form">
+                                <button type="submit" class="btn btn-logout">Logout</button>
+                            </form>
+                        }
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main role="main" class="app-container page-enter">
+        @RenderBody()
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <a class="footer-brand" asp-controller="Home" asp-action="Index" aria-label="MiniTruckDelivery home">
+                <img src="~/images/brand/minitruck-logo.svg" data-logo-light="/images/brand/minitruck-logo.svg" data-logo-dark="/images/brand/minitruck-logo-dark.svg" alt="MiniTruckDelivery" />
+            </a>
+            <div class="footer-credit"><span>Created by</span><strong>Keroles Aziz</strong></div>
+            <nav class="footer-links" aria-label="Creator links">
+                <a href="https://keroaziz12.github.io/Profile_FullStack/" target="_blank" rel="noopener noreferrer">Website</a>
+                <a href="https://github.com/keroaziz12" target="_blank" rel="noopener noreferrer">GitHub</a>
+                <a href="https://www.linkedin.com/in/keroles-aziz-16b175443/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+                <a href="https://wa.me/201288738812" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+                <a href="mailto:kerilesaziz12@gmail.com">Email</a>
+                <a href="tel:+201288738812">Call</a>
+            </nav>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/trip-notification-sound.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
+
+
+
+
+
+
+

@@ -1,0 +1,12 @@
+@model MiniTruckDelivery.Models.AdminDriverDetailsViewModel
+@{ ViewData["Title"] = "Driver details"; }
+<div class="page-heading"><div><span class="eyebrow">ADMIN · DRIVER #@Model.Id</span><h1>@Model.FullName</h1><p>@Model.PhoneNumber · @Model.VehicleType</p></div><a asp-action="Drivers" class="btn btn-outline-primary">Back to drivers</a></div>
+@if (TempData["AdminMessage"] is string message) { <div class="alert alert-info">@message</div> }
+<section class="surface-card p-4 mb-4"><div class="row g-3"><div class="col-md-3"><strong>Account</strong><div>@(Model.HasAccount ? "Linked" : "Legacy profile")</div></div><div class="col-md-3"><strong>Status</strong><div>@(Model.IsActive ? "Active" : "Inactive")</div></div><div class="col-md-3"><strong>Trips</strong><div>@Model.TripsCount</div></div><div class="col-md-3"><strong>Total expenses</strong><div>@Model.TotalExpenses.ToString("N2")</div></div></div>
+<div class="d-flex flex-wrap gap-2 mt-4"><form asp-action="SetDriverActive" asp-route-id="@Model.Id" method="post"><input type="hidden" name="isActive" value="@(!Model.IsActive)"/><button class="btn @(Model.IsActive ? "btn-warning" : "btn-success")" type="submit">@(Model.IsActive ? "Deactivate driver" : "Reactivate driver")</button></form>
+<form asp-action="DeleteDriver" asp-route-id="@Model.Id" method="post" onsubmit="return confirm('Delete this driver profile and account? This is allowed only when there is no trip history.');"><button class="btn btn-danger" type="submit">Delete driver</button></form></div>
+<p class="text-secondary mt-3 mb-0">Drivers with trip history can only be deactivated, preserving their trips and expenses.</p></section>
+<section class="surface-card table-card"><div class="table-responsive"><table class="table align-middle app-table mb-0"><thead><tr><th>Date</th><th>Customer</th><th>From</th><th>To</th><th>Amount</th><th>Expenses</th><th>Status</th><th></th></tr></thead><tbody>
+@foreach (var trip in Model.Trips) { <tr><td>@trip.TripDate.ToString("yyyy-MM-dd")</td><td>@trip.CustomerName</td><td>@trip.StartLocation</td><td>@trip.EndLocation</td><td>@trip.AgreedAmount.ToString("N2")</td><td>@trip.TotalExpenses.ToString("N2")</td><td>@(trip.IsCancelled ? "Cancelled" : "Active")</td><td><a asp-action="TripDetails" asp-route-id="@trip.Id" class="btn btn-sm btn-outline-primary">Expenses</a></td></tr> }
+@if (!Model.Trips.Any()) { <tr><td colspan="8" class="empty-row">No trips recorded for this driver.</td></tr> }
+</tbody></table></div></section>

@@ -1,0 +1,9 @@
+@model IEnumerable<MiniTruckDelivery.Models.AdminTripRowViewModel>
+@{ ViewData["Title"] = "Trips overview"; }
+<div class="page-heading"><div><span class="eyebrow">ADMIN · ACTIVITY</span><h1>Trips</h1><p>Review, cancel, restore, or permanently delete trips.</p></div><a asp-action="Index" class="btn btn-outline-primary">Back to dashboard</a></div>
+@if (TempData["AdminMessage"] is string message) { <div class="alert alert-info">@message</div> }
+<section class="surface-card table-card"><div class="table-responsive"><table class="table align-middle app-table mb-0">
+<thead><tr><th>Date</th><th>Customer</th><th>Driver</th><th>From</th><th>To</th><th>Amount</th><th>Expenses</th><th>Status</th><th></th></tr></thead><tbody>
+@foreach (var trip in Model) { <tr><td>@trip.TripDate.ToString("yyyy-MM-dd")</td><td class="fw-semibold">@trip.CustomerName</td><td>@trip.DriverName</td><td>@trip.StartLocation</td><td>@trip.EndLocation</td><td>@trip.AgreedAmount.ToString("N2")</td><td>@trip.TotalExpenses.ToString("N2")</td><td><span class="status-pill @(trip.IsCancelled ? "status-muted" : "status-ok")">@(trip.IsCancelled ? "Cancelled" : "Active")</span></td><td><a asp-action="TripDetails" asp-route-id="@trip.Id" class="btn btn-sm btn-outline-primary">Manage</a></td></tr> }
+@if (!Model.Any()) { <tr><td colspan="9" class="empty-row">No trips have been registered yet.</td></tr> }
+</tbody></table></div></section>
