@@ -399,3 +399,8 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+
+# Production secrets (connection strings with passwords)
+appsettings.Production.json
+appsettings.*.local.json
