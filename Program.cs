@@ -15,6 +15,13 @@ namespace MiniTruckDelivery
 
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
+            if (string.IsNullOrWhiteSpace(connectionString))
+            {
+                throw new InvalidOperationException(
+                    "The database connection string 'DefaultConnection' is missing. " +
+                    "Configure ConnectionStrings__DefaultConnection in the hosting environment.");
+            }
+
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));
 
@@ -70,6 +77,12 @@ namespace MiniTruckDelivery
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}")
                 .WithStaticAssets();
+            using (var scope = app.Services.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                await dbContext.Database.MigrateAsync();
+            }
+
             await IdentitySeeder.SeedAsync(app.Services, app.Configuration);
 
             app.Run();

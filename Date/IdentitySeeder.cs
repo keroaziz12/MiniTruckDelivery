@@ -41,7 +41,7 @@ public static class IdentitySeeder
             string.IsNullOrWhiteSpace(password))
         {
             throw new InvalidOperationException(
-                "Admin seed settings are missing from User Secrets.");
+                "Admin seed settings are missing. Configure SeedAdmin__UserName, SeedAdmin__Email, and SeedAdmin__Password in the hosting environment.");
         }
 
         var admin = await users.FindByNameAsync(userName);
